@@ -18,7 +18,7 @@ android.permissions = INTERNET
 
 # Android settings (IMPORTANT FIX)
 android.api = 33
-android.minapi = 21
+android.build_tools_version = 33.0.2
 android.ndk = 25b
 android.build_tools_version = 33.0.2
 
