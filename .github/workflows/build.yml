@@ -5,42 +5,18 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+
+    container:
+      image: kivy/buildozer:latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Set up Python (STABLE VERSION)
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-
-    - name: Install system packages
+    - name: Build APK
       run: |
-        sudo apt update
-        sudo apt install -y git zip unzip openjdk-17-jdk \
-        python3-pip python3-setuptools python3-wheel \
-        autoconf automake libtool pkg-config cmake wget
-
-    - name: Install Buildozer (PINNED)
-      run: |
-        pip install --upgrade pip
-        pip install buildozer==1.5.0 cython
-
-    - name: Clean environment
-      run: |
-        rm -rf .buildozer
-        rm -rf ~/.buildozer
-
-    - name: Build APK (NO MANUAL SDK)
-      run: |
-        export BUILDOZER_WARN_ON_ROOT=0
         buildozer android debug
-
-    - name: Find APK
-      run: |
-        find . -name "*.apk"
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
