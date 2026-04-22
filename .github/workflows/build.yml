@@ -11,32 +11,30 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Install system dependencies
+    - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y git zip unzip openjdk-17-jdk \
-        python3-pip python3-setuptools python3-wheel wget
+        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip wget
 
-    - name: Install Buildozer
-      run: |
         pip install --upgrade pip
         pip install buildozer cython
 
-    - name: Install Android SDK (FIXED LICENSE ACCEPT)
+    - name: Setup Android SDK (FORCE FIX)
       run: |
         export ANDROID_HOME=$HOME/android-sdk
-        mkdir -p $ANDROID_HOME/cmdline-tools
+        mkdir -p $ANDROID_HOME
 
         cd $HOME
         wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
 
+        mkdir -p $ANDROID_HOME/cmdline-tools
         unzip commandlinetools-linux-*.zip -d $ANDROID_HOME/cmdline-tools
         mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
 
         export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
 
-        # 🔥 THIS IS THE IMPORTANT FIX
-        yes | sdkmanager --licenses
+        # 🔥 CRITICAL: force license acceptance INTO THIS SDK
+        yes | sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
 
         sdkmanager --sdk_root=$ANDROID_HOME \
           "platform-tools" \
@@ -44,11 +42,18 @@ jobs:
           "build-tools;33.0.2"
 
         echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
-        echo "PATH=$PATH" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
 
-    - name: Build APK
+    - name: FORCE Buildozer to use correct SDK
       run: |
-        export BUILDOZER_WARN_ON_ROOT=0
+        mkdir -p ~/.buildozer
+        echo "[app]" > buildozer.spec
+
+        # Tell buildozer where SDK is
+        export ANDROID_HOME=$HOME/android-sdk
+        export ANDROID_SDK_ROOT=$HOME/android-sdk
+
         buildozer android debug
 
     - name: Upload APK
