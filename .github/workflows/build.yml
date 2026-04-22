@@ -11,7 +11,11 @@ jobs:
       image: kivy/buildozer:latest
 
     steps:
-    - name: Checkout
+    - name: Fix workspace permissions
+      run: |
+        git config --global --add safe.directory /github/workspace
+
+    - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Build APK
