@@ -17,7 +17,6 @@ android.permissions = INTERNET
 
 fullscreen = 0
 
-
 [buildozer]
 log_level = 2
 warn_on_root = 0
