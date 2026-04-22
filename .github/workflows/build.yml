@@ -7,45 +7,26 @@ jobs:
   build:
     runs-on: ubuntu-22.04
 
+    container:
+      image: ubuntu:22.04
+
     steps:
+    - name: Install system packages
+      run: |
+        apt update
+        apt install -y git python3 python3-pip zip unzip openjdk-17-jdk \
+        build-essential autoconf automake libtool pkg-config cmake wget
+
+    - name: Install Buildozer stack (PINNED)
+      run: |
+        pip3 install --upgrade pip
+        pip3 install cython==0.29.36
+        pip3 install buildozer==1.5.0
+
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Set up Python 3.10 (IMPORTANT)
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-
-    - name: Install system deps
-      run: |
-        sudo apt update
-        sudo apt install -y git zip unzip openjdk-17-jdk \
-        python3-pip python3-setuptools python3-wheel \
-        autoconf automake libtool pkg-config cmake
-
-    - name: Install EXACT working Buildozer stack
-      run: |
-        pip install --upgrade pip
-        pip install \
-          buildozer==1.5.0 \
-          cython==0.29.36 \
-          python-for-android==2023.9.16
-
-    - name: CLEAN everything (critical)
-      run: |
-        rm -rf .buildozer
-        rm -rf ~/.buildozer
-
-    - name: Build APK (NO manual SDK)
+    - name: Build APK (no SDK management at all)
       run: |
         export BUILDOZER_WARN_ON_ROOT=0
         buildozer android debug
-
-    - name: Find APK
-      run: find . -name "*.apk"
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: apk
-        path: "**/*.apk"
