@@ -5,28 +5,21 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     container:
-      image: ubuntu:22.04
+      image: kivy/buildozer:latest
 
     steps:
-    - name: Install system packages
-      run: |
-        apt update
-        apt install -y git python3 python3-pip zip unzip openjdk-17-jdk \
-        build-essential autoconf automake libtool pkg-config cmake wget
-
-    - name: Install Buildozer stack (PINNED)
-      run: |
-        pip3 install --upgrade pip
-        pip3 install cython==0.29.36
-        pip3 install buildozer==1.5.0
-
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Build APK (no SDK management at all)
+    - name: Build APK
       run: |
-        export BUILDOZER_WARN_ON_ROOT=0
         buildozer android debug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: apk
+        path: "**/*.apk"
