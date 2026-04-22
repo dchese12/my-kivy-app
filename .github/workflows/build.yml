@@ -9,19 +9,20 @@ jobs:
 
     container:
       image: kivy/buildozer:latest
+      options: --user root
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Fix permissions (IMPORTANT)
+    - name: Fix permissions
       run: |
         git config --global --add safe.directory /github/workspace
-        chown -R 1000:1000 .
+        chmod -R 777 .
 
     - name: Build APK
       run: |
-        su buildozer -c "buildozer -v android debug"
+        buildozer -v android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
