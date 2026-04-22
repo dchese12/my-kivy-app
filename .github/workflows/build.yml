@@ -11,19 +11,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install system dependencies
+    - name: Install system deps
       run: |
         sudo apt update
-        sudo apt install -y \
-          git zip unzip openjdk-17-jdk python3-pip \
-          wget curl
+        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip wget curl
 
-    - name: Install Python dependencies
+    - name: Install Python tools
       run: |
         pip install --upgrade pip
         pip install buildozer cython==0.29.36
 
-    - name: Install Android SDK (fix AIDL issue)
+    - name: Install Android SDK (FIXED)
       run: |
         mkdir -p $HOME/android-sdk
         cd $HOME/android-sdk
@@ -34,18 +32,15 @@ jobs:
         mkdir -p cmdline-tools/latest
         mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
 
-        echo "y" | cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/android-sdk \
+        export ANDROID_HOME=$HOME/android-sdk
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
+
+        yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses
+
+        cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
           "platform-tools" \
           "platforms;android-33" \
           "build-tools;33.0.2"
-
-        yes | cmdline-tools/latest/bin/sdkmanager --licenses --sdk_root=$HOME/android-sdk
-
-    - name: Set environment variables
-      run: |
-        echo "ANDROIDSDK=$HOME/android-sdk" >> $GITHUB_ENV
-        echo "ANDROID_HOME=$HOME/android-sdk" >> $GITHUB_ENV
-        echo "PATH=$PATH:$HOME/android-sdk/platform-tools:$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_ENV
 
     - name: Build APK
       run: |
