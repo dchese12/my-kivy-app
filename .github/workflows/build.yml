@@ -11,33 +11,28 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-
-    - name: Install system dependencies
+    - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y \
-          git zip unzip openjdk-17-jdk \
-          python3-pip python3-setuptools python3-wheel \
-          autoconf automake libtool pkg-config \
-          cmake adb wget
+        sudo apt install -y git zip unzip openjdk-17-jdk \
+        python3-pip python3-setuptools python3-wheel \
+        autoconf automake libtool pkg-config cmake wget
 
     - name: Install Buildozer
       run: |
         pip install --upgrade pip
         pip install buildozer cython
 
-    - name: Install Android SDK (FIX AIDL)
+    - name: Setup Android SDK (FIX AIDL properly)
       run: |
-        mkdir -p $HOME/android-sdk
         export ANDROID_HOME=$HOME/android-sdk
+        export ANDROID_SDK_ROOT=$ANDROID_HOME
+
+        mkdir -p $ANDROID_HOME/cmdline-tools
 
         cd $HOME
         wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-        mkdir -p $ANDROID_HOME/cmdline-tools
+
         unzip commandlinetools-linux-*.zip -d $ANDROID_HOME/cmdline-tools
         mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
 
@@ -45,13 +40,22 @@ jobs:
 
         yes | sdkmanager --licenses || true
 
-        sdkmanager "platform-tools" \
-                   "platforms;android-33" \
-                   "build-tools;33.0.2"
+        sdkmanager --sdk_root=$ANDROID_HOME \
+          "platform-tools" \
+          "platforms;android-33" \
+          "build-tools;33.0.2"
+
+        echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+        echo "PATH=$PATH" >> $GITHUB_ENV
 
     - name: Build APK
       run: |
         export BUILDOZER_WARN_ON_ROOT=0
+        export ANDROID_HOME=$HOME/android-sdk
+        export ANDROID_SDK_ROOT=$HOME/android-sdk
+        export PATH=$HOME/android-sdk/cmdline-tools/latest/bin:$PATH
+
         buildozer -v android debug
 
     - name: Find APK
