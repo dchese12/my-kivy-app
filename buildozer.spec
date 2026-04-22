@@ -17,6 +17,9 @@ android.permissions = INTERNET
 
 fullscreen = 0
 
+android.api = 33
+android.build_tools_version = 33.0.2
+
 
 [buildozer]
 
