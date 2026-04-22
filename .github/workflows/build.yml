@@ -19,12 +19,32 @@ jobs:
         git config --global --add safe.directory /github/workspace
         chmod -R 777 .
 
+    - name: Install missing Android build-tools (FIX AIDL)
+      run: |
+        apt-get update
+        apt-get install -y wget unzip
+
+        mkdir -p $HOME/android-sdk
+        export ANDROID_HOME=$HOME/android-sdk
+
+        cd $HOME
+        wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+        mkdir -p $ANDROID_HOME/cmdline-tools
+        unzip commandlinetools-linux-*.zip -d $ANDROID_HOME/cmdline-tools
+        mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+
+        export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+
+        yes | sdkmanager --licenses || true
+
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+
     - name: Build APK
       run: |
         export BUILDOZER_WARN_ON_ROOT=0
         buildozer -v android debug
 
-    - name: Find APK (debug)
+    - name: Find APK
       run: |
         find . -name "*.apk"
 
