@@ -14,9 +14,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Fix permissions (IMPORTANT)
+      run: |
+        git config --global --add safe.directory /github/workspace
+        chown -R 1000:1000 .
+
     - name: Build APK
       run: |
-        buildozer -v android debug
+        su buildozer -c "buildozer -v android debug"
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
