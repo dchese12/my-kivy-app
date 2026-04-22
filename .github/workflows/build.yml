@@ -9,10 +9,9 @@ jobs:
 
     container:
       image: kivy/buildozer:latest
-      options: --user root
 
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v4
 
     - name: Fix permissions
@@ -22,7 +21,8 @@ jobs:
 
     - name: Build APK
       run: |
-        buildozer -v android debug
+        export BUILDOZER_WARN_ON_ROOT=0
+        yes | buildozer -v android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
