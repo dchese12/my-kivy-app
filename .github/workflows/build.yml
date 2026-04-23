@@ -1,29 +1,38 @@
 name: Build APK
-
-on:
-  push:
+on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
-    container:
-      image: kivy/buildozer:latest
-
+    runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-    - name: Fix permissions (avoid root prompt)
-      run: |
-        useradd -m builder
-        chown -R builder:builder $GITHUB_WORKSPACE
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: Build APK (run as non-root)
-      run: |
-        su builder -c "buildozer android debug"
+      - name: Install System Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential libncurses5-dev libgdbm-dev libnss3-dev \
+          libssl-dev libreadline-dev libffi-dev wget libsqlite3-dev openjdk-17-jdk lld \
+          python3-dev autoconf automake libtool pkg-config zlib1g-dev
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: apk
-        path: bin/*.apk
+      - name: Install Buildozer & Cython
+        run: |
+          pip install --upgrade pip
+          pip install --user buildozer cython==0.29.33 virtualenv
+
+      - name: Build with Buildozer
+        run: |
+          export PATH=$PATH:$HOME/.local/bin
+          # This command answers 'yes' to all prompts automatically
+          yes | buildozer -v android debug
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-app-apk
+          path: bin/*.apk
+
