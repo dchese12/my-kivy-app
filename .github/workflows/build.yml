@@ -1,4 +1,4 @@
-name: Build APK (Docker)
+name: Build APK
 
 on:
   push:
@@ -13,14 +13,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Clean previous builds
+    - name: Fix permissions (avoid root prompt)
       run: |
-        rm -rf .buildozer
-        rm -rf bin
+        useradd -m builder
+        chown -R builder:builder $GITHUB_WORKSPACE
 
-    - name: Build APK
+    - name: Build APK (run as non-root)
       run: |
-        buildozer android debug
+        su builder -c "buildozer android debug"
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
