@@ -28,15 +28,14 @@ jobs:
       - name: Install Buildozer & Cython
         run: |
           pip install --upgrade pip
-          pip install --user buildozer cython==0.29.33 virtualenv
+          # We add 'python-for-android' here to prevent the FileNotFoundError
+          pip install --user buildozer cython==0.29.33 virtualenv python-for-android
 
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
           export JAVA_HOME=$JAVA_HOME_11_X64
-          # Wipe previous failed build data
-          buildozer android clean
-          # Start the actual build
+          # We removed the 'clean' command that caused the error
           buildozer -v android debug
 
       - name: Upload Finished APK
@@ -44,4 +43,3 @@ jobs:
         with:
           name: my-final-apk
           path: bin/*.apk
-
