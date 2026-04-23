@@ -17,11 +17,7 @@ android.permissions = INTERNET
 
 android.api = 33
 android.minapi = 21
-
 android.bootstrap = sdl2
-
-# IMPORTANT: DO NOT force build-tools version
-# let buildozer manage it
 
 log_level = 2
 warn_on_root = 0
