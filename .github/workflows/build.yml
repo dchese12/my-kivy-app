@@ -1,4 +1,4 @@
-name: Build Kivy APK
+name: Build APK
 
 on:
   push:
@@ -8,51 +8,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Install system dependencies
+    - name: Install dependencies
       run: |
         sudo apt update
-        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip wget curl
+        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip
 
-    - name: Install Python tools
-      run: |
         pip install --upgrade pip
         pip install buildozer cython==0.29.36
 
-    - name: Clean all old Android/build caches
+    - name: Clean old build
       run: |
         rm -rf ~/.buildozer
         rm -rf ~/.android
-        rm -rf ~/.gradle
 
-    - name: Install Android SDK (FIXED - NO BUILD-TOOLS 37)
+    - name: Build APK (LET BUILDOZER HANDLE EVERYTHING)
       run: |
-        export ANDROID_HOME=$HOME/android-sdk
-        mkdir -p $ANDROID_HOME
-        cd $ANDROID_HOME
-
-        wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-        unzip commandlinetools-linux-*.zip
-
-        mkdir -p cmdline-tools/latest
-        mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
-
-        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools
-
-        # FORCE ACCEPT ALL LICENSES (this fixes your main error)
-        yes | cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME --licenses || true
-
-        # INSTALL ONLY STABLE SDK (NO 37 EVER)
-        cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
-          "platform-tools" \
-          "platforms;android-33" \
-          "build-tools;33.0.2"
-
-    - name: Build APK with Buildozer
-      run: |
-        buildozer -v android debug
+        buildozer android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
