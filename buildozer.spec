@@ -1,23 +1,17 @@
 [app]
+# (Keep your title and package name as they are)
 
-title = My Kivy App
-package.name = myapp
-package.domain = org.test
+# CRITICAL: Clean requirements. No version numbers!
+requirements = python3,kivy,sqlite3
 
-source.dir = .
-source.include_exts = py,kv,db
+# CRITICAL: Match this to the GitHub Runner architecture
+android.archs = arm64-v8a
 
-version = 0.1
+# CRITICAL: Auto-accept licenses so the build doesn't hang
+android.accept_sdk_license = True
 
-requirements = python3,kivy==2.2.1,sqlite3
+# Ensure this is set to 0 (debug mode)
+android.debug = 1
 
-orientation = portrait
-
-android.permissions = INTERNET
-
-android.api = 33
-android.minapi = 21
-p4a.bootstrap = sdl2
-
-log_level = 2
-warn_on_root = 0
+# If you have external files, ensure they are included
+source.include_exts = py,png,jpg,kv,atlas,db
