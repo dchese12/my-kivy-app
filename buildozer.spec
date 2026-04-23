@@ -6,22 +6,20 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,db
 version = 0.1
 
-# REQUIREMENTS (Fixed versions for stability)
-requirements = python3,kivy==2.3.0,sqlite3,requests
+# REQUIREMENTS
+requirements = python3,kivy==2.3.0,requests
 
-# ANDROID SETTINGS (The "Nuclear" Sweet Spot)
+# THE STABILITY FIXES
 orientation = portrait
 fullscreen = 0
 android.archs = arm64-v8a
 android.allow_backup = True
-android.api = 33
+android.api = 31
 android.minapi = 21
 android.ndk = 25b
 android.ndk_api = 21
 android.accept_sdk_license = True
 android.skip_update = False
-android.gradle_dependencies = 'com.android.tools.build:gradle:7.4.2'
 
-[buildozer]
-log_level = 2
-warn_on_root = 1
+# Explicitly set Build Tools to avoid GitHub's newer versions
+android.build_tools_version = 31.0.0
