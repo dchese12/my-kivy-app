@@ -35,12 +35,12 @@ jobs:
           export JAVA_HOME=$JAVA_HOME_11_X64
           export PATH=$PATH:$HOME/.local/bin
           
-          # Fix for "Aidl not found"
-          # This ensures the Android SDK build-tools are in the system path
+          # Explicitly define Android Home and Path for the SDK tools
           export ANDROID_HOME=/usr/local/lib/android/sdk
-          export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/33.0.0
+          export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/31.0.0
           
-          # Force clean the environment of GitHub's default Gradle
+          # Remove GitHub's default Gradle to prevent version clashes
           sudo rm -rf /usr/share/gradle*
           
           buildozer -v android debug
+
