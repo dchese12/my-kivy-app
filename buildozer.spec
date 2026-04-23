@@ -6,20 +6,18 @@ source.dir = .
 source.include_exts = py,png,jpg,kv,atlas,db
 version = 0.1
 
-# REQUIREMENTS
-requirements = python3,kivy==2.3.0,requests
+# REQUIREMENTS (Must include sqlite3)
+requirements = python3,kivy==2.3.0,sqlite3
 
-# THE STABILITY FIXES
+# SETTINGS
 orientation = portrait
-fullscreen = 0
 android.archs = arm64-v8a
-android.allow_backup = True
 android.api = 31
 android.minapi = 21
 android.ndk = 25b
-android.ndk_api = 21
 android.accept_sdk_license = True
-android.skip_update = False
+android.permissions = WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
 
-# Explicitly set Build Tools to avoid GitHub's newer versions
-android.build_tools_version = 31.0.0
+[buildozer]
+log_level = 2
+warn_on_root = 1
