@@ -12,9 +12,10 @@ requirements = python3,kivy==2.3.0,sqlite3
 orientation = portrait
 android.archs = arm64-v8a
 android.api = 31
-android.minapi = 21
+android.build_tools_version = 31.0.0
 android.ndk = 25b
 android.accept_sdk_license = True
+
 
 # Disable auto-update to stop it from grabbing Gradle 9
 android.skip_update = True
