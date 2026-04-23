@@ -1,1 +1,35 @@
+name: Build APK
 
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y git zip unzip openjdk-17-jdk python3-pip wget curl
+
+        pip install --upgrade pip
+        pip install cython==0.29.36 buildozer
+
+    - name: HARD RESET environment (THIS IS KEY)
+      run: |
+        rm -rf ~/.buildozer
+        rm -rf ~/.android
+        rm -rf ~/.gradle
+
+    - name: Build APK (LET BUILDOZER CONTROL SDK)
+      run: |
+        buildozer android debug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: apk
+        path: bin/*.apk
