@@ -9,7 +9,7 @@ source.include_exts = py,kv,db
 
 version = 0.1
 
-requirements = python3,kivy,sqlite3
+requirements = python3,kivy==2.2.1,sqlite3
 
 orientation = portrait
 
@@ -18,8 +18,10 @@ android.permissions = INTERNET
 android.api = 33
 android.minapi = 21
 
-android.build_tools_version = 33.0.2
-android.ndk = 25b
+android.bootstrap = sdl2
+
+# IMPORTANT: DO NOT force build-tools version
+# let buildozer manage it
 
 log_level = 2
 warn_on_root = 0
