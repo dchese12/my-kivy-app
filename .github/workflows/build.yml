@@ -32,8 +32,14 @@ jobs:
 
       - name: Build with Buildozer
         run: |
-          export PATH=$PATH:$HOME/.local/bin
+          # 1. Force use of Java 11
           export JAVA_HOME=$JAVA_HOME_11_X64
-          # This command ensures Buildozer can actually run the Gradle script
+          export PATH=$JAVA_HOME/bin:$PATH:$HOME/.local/bin
+          
+          # 2. REMOVE GITHUB'S DEFAULT GRADLE (The likely culprit)
+          sudo rm -rf /usr/share/gradle*
+          sudo rm -rf /usr/bin/gradle
+          
+          # 3. Build
           buildozer -v android debug
 
