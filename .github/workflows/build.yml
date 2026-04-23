@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repo
       uses: actions/checkout@v4
 
     - name: Install system dependencies
@@ -21,7 +21,12 @@ jobs:
         pip install --upgrade pip
         pip install buildozer cython==0.29.36
 
-    - name: Setup Android SDK (FIXED + NO 37 + NO AIDL ERROR)
+    - name: Clean old build caches (IMPORTANT)
+      run: |
+        rm -rf ~/.buildozer
+        rm -rf ~/.android
+
+    - name: Setup Android SDK (LOCKED to stable versions)
       run: |
         export ANDROID_HOME=$HOME/android-sdk
         mkdir -p $ANDROID_HOME
@@ -42,7 +47,7 @@ jobs:
           "platforms;android-33" \
           "build-tools;33.0.2"
 
-    - name: Build APK with Buildozer
+    - name: Build APK
       run: |
         buildozer -v android debug
 
