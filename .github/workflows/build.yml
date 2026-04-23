@@ -3,7 +3,7 @@ on: [push, workflow_dispatch]
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
 
@@ -23,7 +23,8 @@ jobs:
           sudo apt update
           sudo apt install -y build-essential libncurses5-dev libgdbm-dev libnss3-dev \
           libssl-dev libreadline-dev libffi-dev wget libsqlite3-dev lld \
-          python3-dev autoconf automake libtool pkg-config zlib1g-dev aidl
+          python3-dev autoconf automake libtool pkg-config zlib1g-dev aidl \
+          lib32z1 lib32stdc++6
 
       - name: Install Buildozer & Cython
         run: |
@@ -35,11 +36,11 @@ jobs:
           export JAVA_HOME=$JAVA_HOME_11_X64
           export PATH=$PATH:$HOME/.local/bin
           
-          # Explicitly define Android Home and Path for the SDK tools
+          # Force the Android SDK Path
           export ANDROID_HOME=/usr/local/lib/android/sdk
           export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools/31.0.0
           
-          # Remove GitHub's default Gradle to prevent version clashes
+          # Clean out GitHub's conflicting Gradle
           sudo rm -rf /usr/share/gradle*
           
           buildozer -v android debug
