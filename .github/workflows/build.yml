@@ -1,4 +1,4 @@
-name: Build APK
+name: Final Build APK
 on: [push, workflow_dispatch]
 
 jobs:
@@ -27,11 +27,12 @@ jobs:
       - name: Build with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
+          # This triggers the actual 25-minute build process
           yes | buildozer -v android debug
 
-      - name: Upload Artifact
+      - name: Upload Finished APK
         uses: actions/upload-artifact@v4
         with:
-          name: my-app-apk
+          name: my-final-apk
           path: bin/*.apk
 
